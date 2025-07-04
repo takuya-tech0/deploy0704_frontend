@@ -18,8 +18,11 @@ export default function Login() {
   // ログインハンドラ関数を定義（非同期関数）
   const handleLogin = async () => {
     try {
+      // 環境変数からAPI URLを取得
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      
       // /login エンドポイントに POST リクエストを送信
-      const response = await fetch('http://127.0.0.1:8000/login', {
+      const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,8 +30,10 @@ export default function Login() {
         // ユーザー名とパスワードを JSON 形式で送信
         body: JSON.stringify({ username, password }),
       });
+      
       // レスポンスの JSON を解析
       const data = await response.json();
+      
       // レスポンスが OK (status 200-299) の場合
       if (response.ok) {
         setIsSuccess(true);
@@ -37,7 +42,7 @@ export default function Login() {
         // レスポンスが OK でない場合
         setIsSuccess(false);
         // サーバーからのメッセージまたはデフォルトメッセージを設定
-        setMessage(data.message || '認証に失敗しました');
+        setMessage(data.detail || data.message || '認証に失敗しました');
       }
     } catch (error) {
       // エラーが発生した場合
